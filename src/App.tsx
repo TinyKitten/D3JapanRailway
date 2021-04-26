@@ -28,7 +28,7 @@ const projection = geoMercator()
 const path = geoPath(projection).projection(projection);
 
 const App: React.FC = () => {
-  const { loading, error, data } = useQuery(ALL_STATIONS);
+  const { /*loading,*/ error, data } = useQuery(ALL_STATIONS);
   const [rootGroup, setRootGroup] = useState<
     Selection<SVGGElement, unknown, null, undefined>
   >();
