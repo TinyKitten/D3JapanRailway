@@ -1,16 +1,15 @@
 import * as topojson from 'topojson-client';
-import { select as d3Select, json as d3Json, Selection } from 'd3';
-import { geoCircle, geoMercator, geoPath } from 'd3-geo';
+import * as d3 from 'd3';
 import { GeoJsonProperties, Geometry, FeatureCollection } from 'geojson';
 import japanGeoPath from './geo/japan.topojson';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import Station from './models/Station';
 import LoadingOverlay from './components/LoadingOverlay';
 
 const MAP_WIDTH = window.innerWidth;
 const MAP_HEIGHT = window.innerHeight;
-const MAP_SCALE = 1200;
+const INITIAL_SCALE = 1200;
 
 const ALL_STATIONS = gql`
   query GetAllStations {
@@ -22,18 +21,19 @@ const ALL_STATIONS = gql`
   }
 `;
 
-const projection = geoMercator()
+const projection = d3
+  .geoEquirectangular()
+  .scale(MAP_WIDTH)
+  .rotate([0, 0])
   .center([136.0, 35.6])
   .translate([MAP_WIDTH / 2, MAP_HEIGHT / 2])
-  .scale(MAP_SCALE);
-const path = geoPath(projection).projection(projection);
+  .scale(INITIAL_SCALE);
+
+const path = d3.geoPath(projection).projection(projection);
 
 const App: React.FC = () => {
   const { loading, error, data } = useQuery(ALL_STATIONS);
-  const [rootGroup, setRootGroup] = useState<
-    Selection<SVGGElement, unknown, null, undefined>
-  >();
-  const [ready, setReady] = useState(false);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     if (error) {
@@ -41,34 +41,12 @@ const App: React.FC = () => {
     }
   }, [error]);
 
-  const svgRef = useRef<SVGSVGElement>(null);
-  useEffect(() => {
-    if (!rootGroup || loading) {
-      return;
-    }
-    data?.allStations.forEach((s: Station) => {
-      const circle = geoCircle()
-        .center([s.longitude, s.latitude])
-        .radius(0.025);
-      rootGroup
-        .append('path')
-        .datum(circle)
-        .attr('class', 'circle')
-        .attr('d', path)
-        .attr('fill', 'red');
-    });
-    setReady(true);
-  }, [data, loading, rootGroup]);
-
-  const createMap = useCallback(async () => {
-    const svg = d3Select(svgRef.current)
-      .attr('width', MAP_WIDTH)
-      .attr('height', MAP_HEIGHT);
-    const topo = await d3Json<
+  const renderMap = useCallback(async () => {
+    const topo = await d3.json<
       TopoJSON.Topology<TopoJSON.Objects<GeoJsonProperties>>
     >(japanGeoPath);
 
-    if (!topo) {
+    if (!topo || !data) {
       return;
     }
 
@@ -76,8 +54,14 @@ const App: React.FC = () => {
       topo,
       topo.objects.japan
     ) as FeatureCollection<Geometry, GeoJsonProperties>;
-    const g = svg.append('g');
-    g.selectAll('path')
+    const svg = d3
+      .select(svgRef?.current as Element)
+      .attr('width', MAP_WIDTH)
+      .attr('height', MAP_HEIGHT);
+
+    svg
+      .append('g')
+      .selectAll('path')
       .data(geojson.features)
       .enter()
       .append('path')
@@ -85,16 +69,29 @@ const App: React.FC = () => {
       .attr('stroke', 'white')
       .attr('fill', 'black');
 
-    setRootGroup(g);
-  }, []);
+    const stations = data.allStations as Station[];
+
+    svg
+      .append('g')
+      .selectAll('circle')
+      .data(stations)
+      .enter()
+      .append('circle')
+      .attr(
+        'transform',
+        (d) => `translate(${projection([d.longitude, d.latitude])})`
+      )
+      .attr('r', 0.5)
+      .attr('fill', ' red');
+  }, [data]);
 
   useEffect(() => {
-    createMap();
-  }, [createMap]);
+    renderMap();
+  }, [renderMap]);
 
   return (
     <>
-      {!ready && <LoadingOverlay />}
+      {loading && <LoadingOverlay />}
       <svg ref={svgRef}></svg>
     </>
   );
