@@ -68,6 +68,7 @@ const App: React.FC = () => {
     if (!topo) {
       return;
     }
+
     const geojson = topojson.feature(
       topo,
       topo.objects.japan
@@ -87,11 +88,8 @@ const App: React.FC = () => {
   useEffect(() => {
     createMap();
   }, [createMap]);
-  return (
-    <div className="App">
-      <svg ref={svgRef}></svg>
-    </div>
-  );
+
+  return <svg ref={svgRef}></svg>;
 };
 
 export default App;
