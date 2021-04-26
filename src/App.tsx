@@ -6,6 +6,7 @@ import japanGeoPath from './geo/japan.topojson';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import Station from './models/Station';
+import LoadingOverlay from './components/LoadingOverlay';
 
 const MAP_WIDTH = window.innerWidth;
 const MAP_HEIGHT = window.innerHeight;
@@ -28,10 +29,11 @@ const projection = geoMercator()
 const path = geoPath(projection).projection(projection);
 
 const App: React.FC = () => {
-  const { /*loading,*/ error, data } = useQuery(ALL_STATIONS);
+  const { loading, error, data } = useQuery(ALL_STATIONS);
   const [rootGroup, setRootGroup] = useState<
     Selection<SVGGElement, unknown, null, undefined>
   >();
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -41,7 +43,7 @@ const App: React.FC = () => {
 
   const svgRef = useRef<SVGSVGElement>(null);
   useEffect(() => {
-    if (!rootGroup) {
+    if (!rootGroup || loading) {
       return;
     }
     data?.allStations.forEach((s: Station) => {
@@ -55,7 +57,8 @@ const App: React.FC = () => {
         .attr('d', path)
         .attr('fill', 'red');
     });
-  }, [data, rootGroup]);
+    setReady(true);
+  }, [data, loading, rootGroup]);
 
   const createMap = useCallback(async () => {
     const svg = d3Select(svgRef.current)
@@ -89,7 +92,12 @@ const App: React.FC = () => {
     createMap();
   }, [createMap]);
 
-  return <svg ref={svgRef}></svg>;
+  return (
+    <>
+      {!ready && <LoadingOverlay />}
+      <svg ref={svgRef}></svg>
+    </>
+  );
 };
 
 export default App;
