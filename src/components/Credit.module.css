@@ -1,0 +1,31 @@
+.credit {
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  opacity: 0.5;
+}
+
+.logo {
+  margin-bottom: 8px;
+}
+
+.text {
+  font-size: 0.75rem;
+  margin: 4px 0 0 0;
+}
+
+.link {
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: bold;
+  outline: none;
+}
+
+.text,
+.link {
+  color: #fff;
+  user-select: none;
+}

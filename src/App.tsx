@@ -14,6 +14,7 @@ import japanGeoPath from './geo/japan.topojson';
 import LoadingOverlay from './components/LoadingOverlay';
 import Station from './models/Station';
 import ErrorOverlay from './components/ErrorOverlay';
+import Credit from './components/Credit';
 
 const ALL_STATIONS = gql`
   query GetAllStations {
@@ -134,6 +135,7 @@ const App: React.FC = () => {
           `${object.name}駅\n${object.address}\n緯度: ${object.coordinates[1]}\n経度: ${object.coordinates[0]}`
         }
       />
+      <Credit />
     </>
   );
 };
