@@ -51,14 +51,25 @@ const Tools: React.FC = () => {
 
   return (
     <div className={styles.tools}>
-      {ALL_TOOLS.map((t) => (
-        <ToolButton
-          disabled={getIsDisabled(t)}
-          onClick={() => handleOnClick(t)}
-          tool={t}
-          key={t.id}
-        />
-      ))}
+      {ALL_TOOLS.map((t) =>
+        t.id === 'location' ? (
+          locationFromState.location && (
+            <ToolButton
+              disabled={getIsDisabled(t)}
+              onClick={() => handleOnClick(t)}
+              tool={t}
+              key={t.id}
+            />
+          )
+        ) : (
+          <ToolButton
+            disabled={getIsDisabled(t)}
+            onClick={() => handleOnClick(t)}
+            tool={t}
+            key={t.id}
+          />
+        )
+      )}
     </div>
   );
 };
