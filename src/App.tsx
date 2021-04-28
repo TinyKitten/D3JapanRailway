@@ -1,133 +1,139 @@
+import React, { useEffect, useState } from 'react';
+import { gql, useQuery } from '@apollo/client';
+import DeckGL from '@deck.gl/react';
+import {
+  GeoJsonLayer,
+  GeoJsonLayerProps,
+  ScatterplotLayer,
+  ScatterplotLayerProps,
+} from '@deck.gl/layers';
 import * as topojson from 'topojson-client';
 import * as d3 from 'd3';
-import { GeoJsonProperties, Geometry, FeatureCollection } from 'geojson';
+import { GeoJsonProperties, FeatureCollection, Geometry } from 'geojson';
 import japanGeoPath from './geo/japan.topojson';
-import React, { useCallback, useEffect, useRef } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import Station from './models/Station';
 import LoadingOverlay from './components/LoadingOverlay';
-import { D3ZoomEvent } from 'd3';
-
-const MAP_WIDTH = window.innerWidth;
-const MAP_HEIGHT = window.innerHeight;
-const INITIAL_SCALE = 1200;
+import Station from './models/Station';
+import ErrorOverlay from './components/ErrorOverlay';
 
 const ALL_STATIONS = gql`
   query GetAllStations {
     allStations {
+      name
       latitude
       longitude
+      address
     }
   }
 `;
 
-const projection = d3
-  .geoEquirectangular()
-  .scale(MAP_WIDTH)
-  .rotate([0, 0])
-  .center([136.0, 35.6])
-  .translate([MAP_WIDTH / 2, MAP_HEIGHT / 2])
-  .scale(INITIAL_SCALE);
-
-const path = d3.geoPath(projection).projection(projection);
+type StationLayerData = {
+  name: string;
+  coordinates: [number, number];
+  exits: number;
+  address: string;
+};
 
 const App: React.FC = () => {
   const { loading, error, data } = useQuery(ALL_STATIONS);
-  const svgRef = useRef<SVGSVGElement>(null);
+
+  const initialViewState = {
+    latitude: 35.6,
+    longitude: 136.0,
+    zoom: 4,
+    bearing: 0,
+    pitch: 0,
+  };
+
+  const [geoJSONLayer, setGeoJSONLayer] = useState<
+    GeoJsonLayer<
+      FeatureCollection<Geometry, GeoJsonProperties>,
+      GeoJsonLayerProps<FeatureCollection<Geometry, GeoJsonProperties>>
+    >
+  >();
+  const [scatterplotLayer, setScatterplotLayer] = useState<
+    ScatterplotLayer<StationLayerData, ScatterplotLayerProps<StationLayerData>>
+  >();
 
   useEffect(() => {
-    if (error) {
-      alert(error.message);
-    }
-  }, [error]);
+    const initAsync = async () => {
+      const topo = await d3.json<
+        TopoJSON.Topology<TopoJSON.Objects<GeoJsonProperties>>
+      >(japanGeoPath);
 
-  const renderMap = useCallback(async () => {
-    const topo = await d3.json<
-      TopoJSON.Topology<TopoJSON.Objects<GeoJsonProperties>>
-    >(japanGeoPath);
+      if (!topo) {
+        return;
+      }
 
-    if (!topo || !data) {
+      const geojson = topojson.feature(
+        topo,
+        topo.objects.japan
+      ) as FeatureCollection<Geometry, GeoJsonProperties>;
+
+      const layer = new GeoJsonLayer({
+        id: 'geojson-layer',
+        data: geojson,
+        getFillColor: [160, 160, 180, 200],
+        stroked: true,
+        extruded: false,
+        wireframe: true,
+        lineJointRounded: true,
+        lineWidthMinPixels: 1,
+      });
+      setGeoJSONLayer(layer);
+    };
+    initAsync();
+  }, []);
+
+  useEffect(() => {
+    if (!data) {
       return;
     }
 
-    const geojson = topojson.feature(
-      topo,
-      topo.objects.japan
-    ) as FeatureCollection<Geometry, GeoJsonProperties>;
-    const svg = d3
-      .select(svgRef?.current as Element)
-      .attr('width', MAP_WIDTH)
-      .attr('height', MAP_HEIGHT);
-
-    const zoomLayer = svg.append('g');
-
-    zoomLayer
-      .append('g')
-      .selectAll('path')
-      .data(geojson.features)
-      .enter()
-      .append('path')
-      .attr('d', path)
-      .attr('stroke', '#eeeeee')
-      .attr('fill', '#126e82')
-      .attr('cursor', 'grab');
-    const stations = data.allStations as Station[];
-
-    const dots = zoomLayer
-      .append('g')
-      .selectAll('circle')
-      .data(stations)
-      .enter()
-      .append('circle')
-      .attr(
-        'transform',
-        (d) => `translate(${projection([d.longitude, d.latitude])})`
-      )
-      .attr('r', 0.5)
-      .attr('fill', ' #cf0000');
-
-    const zoomed = (e: D3ZoomEvent<Element, null>) => {
-      zoomLayer.attr('transform', e.transform.toString());
-      if (e.transform.k < 8) {
-        dots.attr('r', 0.5);
-      } else if (e.transform.k < 16) {
-        dots.attr('r', 0.25);
-      } else if (e.transform.k < 32) {
-        dots.attr('r', 0.1);
-      } else if (e.transform.k <= 64) {
-        dots.attr('r', 0.05);
-      }
-    };
-
-    const dragstarted = () => {
-      zoomLayer.attr('cursor', 'grabbing');
-    };
-
-    function dragended() {
-      zoomLayer.attr('cursor', 'grab');
-    }
-
-    svg.call(
-      d3
-        .zoom()
-        .extent([
-          [0, 0],
-          [MAP_WIDTH, MAP_HEIGHT],
-        ])
-        .scaleExtent([0, 64])
-        .on('zoom', zoomed)
-    );
-    svg.call(d3.drag().on('start', dragstarted).on('end', dragended));
+    const layer = new ScatterplotLayer<StationLayerData>({
+      id: 'scatterplot-layer',
+      data: data.allStations.map((s: Station) => ({
+        name: s.name,
+        coordinates: [s.longitude, s.latitude],
+        exits: 4214,
+        address: s.address,
+      })),
+      pickable: true,
+      opacity: 0.8,
+      stroked: true,
+      filled: true,
+      radiusScale: 6,
+      radiusMinPixels: 1,
+      radiusMaxPixels: 100,
+      lineWidthMinPixels: 1,
+      getPosition: (d) => d.coordinates,
+      getRadius: (d) => Math.sqrt(d.exits),
+      getFillColor: () => [255, 140, 0],
+    });
+    setScatterplotLayer(layer);
   }, [data]);
 
-  useEffect(() => {
-    renderMap();
-  }, [renderMap]);
+  if (!geoJSONLayer || !scatterplotLayer) {
+    return <LoadingOverlay />;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const UntypedDeckGL = DeckGL as any;
 
   return (
     <>
       {loading && <LoadingOverlay />}
-      <svg style={{ cursor: 'drag' }} ref={svgRef}></svg>
+      {error && <ErrorOverlay />}
+      <UntypedDeckGL
+        initialViewState={initialViewState}
+        controller={true}
+        layers={[geoJSONLayer, scatterplotLayer]}
+        width={window.innerWidth}
+        height={window.innerHeight}
+        getTooltip={({ object }: { object: StationLayerData }) =>
+          object &&
+          `${object.name}駅\n${object.address}\n緯度: ${object.coordinates[0]}\n経度: ${object.coordinates[1]}`
+        }
+      />
     </>
   );
 };
