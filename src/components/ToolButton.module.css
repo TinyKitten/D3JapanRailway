@@ -1,0 +1,16 @@
+.button {
+  appearance: none;
+  background-color: #fcfcfc;
+  border-radius: 50%;
+  border: none;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.16);
+}
+.button:disabled {
+  box-shadow: none;
+}

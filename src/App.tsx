@@ -1,12 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import DeckGL from '@deck.gl/react';
-import {
-  GeoJsonLayer,
-  GeoJsonLayerProps,
-  ScatterplotLayer,
-  ScatterplotLayerProps,
-} from '@deck.gl/layers';
+import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
 import * as topojson from 'topojson-client';
 import * as d3 from 'd3';
 import { GeoJsonProperties, FeatureCollection, Geometry } from 'geojson';
@@ -15,6 +11,11 @@ import LoadingOverlay from './components/LoadingOverlay';
 import Station from './models/Station';
 import ErrorOverlay from './components/ErrorOverlay';
 import Credit from './components/Credit';
+import { IconButton, Snackbar } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import locationState from './atoms/location';
+import { useRecoilState } from 'recoil';
+import Tools from './components/Tools';
 
 const ALL_STATIONS = gql`
   query GetAllStations {
@@ -38,24 +39,20 @@ type StationLayerData = {
 
 const App: React.FC = () => {
   const { loading, error, data } = useQuery(ALL_STATIONS);
+  const [hasLocationError, setHasLocationError] = useState(false);
+  const [pendingLocationFetch, setPendingLocationFetch] = useState(true);
+  const [{ location }, setLocationFromState] = useRecoilState(locationState);
 
   const initialViewState = {
-    latitude: 35.6,
-    longitude: 136.0,
-    zoom: 4,
+    latitude: location?.coords.latitude || 35.6,
+    longitude: location?.coords.longitude || 136.0,
+    zoom: location ? 10 : 4,
     bearing: 0,
     pitch: 0,
   };
 
-  const [geoJSONLayer, setGeoJSONLayer] = useState<
-    GeoJsonLayer<
-      FeatureCollection<Geometry, GeoJsonProperties>,
-      GeoJsonLayerProps<FeatureCollection<Geometry, GeoJsonProperties>>
-    >
-  >();
-  const [scatterplotLayer, setScatterplotLayer] = useState<
-    ScatterplotLayer<StationLayerData, ScatterplotLayerProps<StationLayerData>>
-  >();
+  const [geoJSONLayer, setGeoJSONLayer] = useState<any>();
+  const [scatterplotLayer, setScatterplotLayer] = useState<any>();
 
   useEffect(() => {
     const initAsync = async () => {
@@ -92,7 +89,7 @@ const App: React.FC = () => {
       return;
     }
 
-    const layer = new ScatterplotLayer<StationLayerData>({
+    const layer = new ScatterplotLayer({
       id: 'scatterplot-layer',
       data: data.allStations.map((s: Station) => ({
         name: s.name,
@@ -109,20 +106,47 @@ const App: React.FC = () => {
       radiusMinPixels: 1,
       radiusMaxPixels: 100,
       lineWidthMinPixels: 1,
-      getPosition: (d) => d.coordinates,
-      getRadius: (d) => Math.sqrt(d.exits),
+      getPosition: (d: StationLayerData) => (d as StationLayerData).coordinates,
+      getRadius: (d: StationLayerData) =>
+        Math.sqrt((d as StationLayerData).exits),
       getFillColor: () => [255, 140, 0],
-      onClick: (d) =>
-        window.open(`https://near.tinykitten.me/station/${d.object.id}`),
+      onClick: (d: { object: unknown | StationLayerData }) =>
+        window.open(
+          `https://near.tinykitten.me/station/${
+            (d.object as StationLayerData).id
+          }`
+        ),
     });
     setScatterplotLayer(layer);
   }, [data]);
 
-  if (!geoJSONLayer || !scatterplotLayer) {
+  useEffect(() => {
+    setLocationFromState((prev) => ({
+      ...prev,
+      fetching: true,
+    }));
+    navigator.geolocation.getCurrentPosition(
+      (location) => {
+        setLocationFromState((prev) => ({
+          ...prev,
+          location,
+          fetching: false,
+        }));
+        setPendingLocationFetch(false);
+      },
+      () => {
+        setHasLocationError(true);
+        setPendingLocationFetch(false);
+      }
+    );
+  }, [setLocationFromState]);
+
+  if (pendingLocationFetch || !geoJSONLayer || !scatterplotLayer) {
     return <LoadingOverlay />;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const closeLocationErrorSnackbar = () => setHasLocationError(false);
+
   const UntypedDeckGL = DeckGL as any;
 
   return (
@@ -141,6 +165,27 @@ const App: React.FC = () => {
         }
       />
       <Credit />
+      <Tools />
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        open={hasLocationError}
+        autoHideDuration={6000}
+        onClose={() => setHasLocationError(false)}
+        message="位置情報を取得できませんでした"
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={closeLocationErrorSnackbar}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
     </>
   );
 };

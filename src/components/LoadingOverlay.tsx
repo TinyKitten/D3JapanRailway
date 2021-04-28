@@ -1,10 +1,10 @@
 import styles from './LoadingOverlay.module.css';
-import LoadingSpinner from './LoadingSpinner';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const LoadingOverlay: React.FC = () => {
   return (
     <div className={styles.overlay}>
-      <LoadingSpinner />
+      <CircularProgress size={80} />
     </div>
   );
 };
