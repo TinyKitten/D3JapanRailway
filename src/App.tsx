@@ -19,6 +19,7 @@ import Credit from './components/Credit';
 const ALL_STATIONS = gql`
   query GetAllStations {
     allStations {
+      groupId
       name
       latitude
       longitude
@@ -32,6 +33,7 @@ type StationLayerData = {
   coordinates: [number, number];
   exits: number;
   address: string;
+  id: number;
 };
 
 const App: React.FC = () => {
@@ -97,6 +99,7 @@ const App: React.FC = () => {
         coordinates: [s.longitude, s.latitude],
         exits: 4214,
         address: s.address,
+        id: s.groupId,
       })),
       pickable: true,
       opacity: 0.8,
@@ -109,6 +112,8 @@ const App: React.FC = () => {
       getPosition: (d) => d.coordinates,
       getRadius: (d) => Math.sqrt(d.exits),
       getFillColor: () => [255, 140, 0],
+      onClick: (d) =>
+        window.open(`https://near.tinykitten.me/station/${d.object.id}`),
     });
     setScatterplotLayer(layer);
   }, [data]);
