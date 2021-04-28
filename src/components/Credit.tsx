@@ -13,10 +13,7 @@ const Credit: React.FC = () => (
     </a>
     <p className={styles.text}>
       A product of{' '}
-      <a
-        className={styles.link}
-        href="https://github.com/TinyKitten/D3JapanRailway"
-      >
+      <a className={styles.link} href="https://tinykitten.me">
         TinyKitten
       </a>
     </p>
