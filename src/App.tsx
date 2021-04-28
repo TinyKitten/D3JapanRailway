@@ -68,8 +68,8 @@ const App: React.FC = () => {
       .enter()
       .append('path')
       .attr('d', path)
-      .attr('stroke', 'white')
-      .attr('fill', 'black')
+      .attr('stroke', '#eeeeee')
+      .attr('fill', '#126e82')
       .attr('cursor', 'grab');
     const stations = data.allStations as Station[];
 
@@ -84,7 +84,7 @@ const App: React.FC = () => {
         (d) => `translate(${projection([d.longitude, d.latitude])})`
       )
       .attr('r', 0.5)
-      .attr('fill', ' red');
+      .attr('fill', ' #cf0000');
 
     const zoomed = (e: D3ZoomEvent<Element, null>) => {
       zoomLayer.attr('transform', e.transform.toString());
