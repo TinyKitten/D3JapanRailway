@@ -4,7 +4,7 @@ import Logo from './Logo';
 
 const Credit: React.FC = () => (
   <footer className={styles.credit}>
-    <Logo className={styles.logo} width={170} height={51.2} />
+    <Logo className={styles.logo} width={85} height={25.6} />
     <a
       className={styles.link}
       href="https://github.com/TinyKitten/D3JapanRailway"
