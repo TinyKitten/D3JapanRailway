@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import Station from './models/Station';
 import LoadingOverlay from './components/LoadingOverlay';
+import { D3ZoomEvent } from 'd3';
 
 const MAP_WIDTH = window.innerWidth;
 const MAP_HEIGHT = window.innerHeight;
@@ -14,7 +15,6 @@ const INITIAL_SCALE = 1200;
 const ALL_STATIONS = gql`
   query GetAllStations {
     allStations {
-      name
       latitude
       longitude
     }
@@ -59,7 +59,9 @@ const App: React.FC = () => {
       .attr('width', MAP_WIDTH)
       .attr('height', MAP_HEIGHT);
 
-    svg
+    const zoomLayer = svg.append('g');
+
+    zoomLayer
       .append('g')
       .selectAll('path')
       .data(geojson.features)
@@ -67,11 +69,11 @@ const App: React.FC = () => {
       .append('path')
       .attr('d', path)
       .attr('stroke', 'white')
-      .attr('fill', 'black');
-
+      .attr('fill', 'black')
+      .attr('cursor', 'grab');
     const stations = data.allStations as Station[];
 
-    svg
+    const dots = zoomLayer
       .append('g')
       .selectAll('circle')
       .data(stations)
@@ -83,6 +85,39 @@ const App: React.FC = () => {
       )
       .attr('r', 0.5)
       .attr('fill', ' red');
+
+    const zoomed = (e: D3ZoomEvent<Element, null>) => {
+      zoomLayer.attr('transform', e.transform.toString());
+      if (e.transform.k < 8) {
+        dots.attr('r', 0.5);
+      } else if (e.transform.k < 16) {
+        dots.attr('r', 0.25);
+      } else if (e.transform.k < 32) {
+        dots.attr('r', 0.1);
+      } else if (e.transform.k <= 64) {
+        dots.attr('r', 0.05);
+      }
+    };
+
+    const dragstarted = () => {
+      zoomLayer.attr('cursor', 'grabbing');
+    };
+
+    function dragended() {
+      zoomLayer.attr('cursor', 'grab');
+    }
+
+    svg.call(
+      d3
+        .zoom()
+        .extent([
+          [0, 0],
+          [MAP_WIDTH, MAP_HEIGHT],
+        ])
+        .scaleExtent([0, 64])
+        .on('zoom', zoomed)
+    );
+    svg.call(d3.drag().on('start', dragstarted).on('end', dragended));
   }, [data]);
 
   useEffect(() => {
@@ -92,7 +127,7 @@ const App: React.FC = () => {
   return (
     <>
       {loading && <LoadingOverlay />}
-      <svg ref={svgRef}></svg>
+      <svg style={{ cursor: 'drag' }} ref={svgRef}></svg>
     </>
   );
 };
