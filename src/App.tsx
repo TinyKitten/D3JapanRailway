@@ -131,7 +131,7 @@ const App: React.FC = () => {
         height={window.innerHeight}
         getTooltip={({ object }: { object: StationLayerData }) =>
           object &&
-          `${object.name}駅\n${object.address}\n緯度: ${object.coordinates[0]}\n経度: ${object.coordinates[1]}`
+          `${object.name}駅\n${object.address}\n緯度: ${object.coordinates[1]}\n経度: ${object.coordinates[0]}`
         }
       />
     </>
