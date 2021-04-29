@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import DeckGL from '@deck.gl/react';
-import { GeoJsonLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { GeoJsonLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers';
 import * as topojson from 'topojson-client';
 import * as d3 from 'd3';
 import { GeoJsonProperties, FeatureCollection, Geometry } from 'geojson';
-import japanGeoPath from './geo/japan.topojson';
+import japanGeoPath from './data/japan.topojson';
 import LoadingOverlay from './components/LoadingOverlay';
 import Station from './models/Station';
 import ErrorOverlay from './components/ErrorOverlay';
@@ -16,6 +16,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import locationState from './atoms/location';
 import { useRecoilState } from 'recoil';
 import Tools from './components/Tools';
+import PREF_OFFICES from './data/prefOffices.json';
 
 const ALL_STATIONS = gql`
   query GetAllStations {
@@ -43,6 +44,32 @@ type UserLocationLayerData = {
   coordinates: [number, number];
   exits: number;
 };
+
+type PrefOffice = {
+  pref: string;
+  prefEn: string;
+  url: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+};
+
+const prefNameCharacters = PREF_OFFICES.reduce((acc, cur) => {
+  const splitted = cur.pref.split('');
+  splitted.forEach((c) => acc.push(c));
+  return acc;
+}, []).reduce((acc, cur) => {
+  if (acc.indexOf(cur) !== -1) {
+    return acc;
+  } else {
+    acc.push(cur);
+  }
+
+  return acc;
+}, []);
+
+const SCATTER_SCALE_FACTOR = 4214;
+const PREF_SCALE_FACTOR = 500;
 
 const App: React.FC = () => {
   const { loading, error, data } = useQuery(ALL_STATIONS);
@@ -75,7 +102,7 @@ const App: React.FC = () => {
         {
           type: 'userLocation',
           coordinates: [location.coords.longitude, location.coords.latitude],
-          exits: 4214,
+          exits: SCATTER_SCALE_FACTOR,
         },
       ] as UserLocationLayerData[],
       pickable: true,
@@ -139,7 +166,7 @@ const App: React.FC = () => {
             type: 'station',
             name: s.name,
             coordinates: [s.longitude, s.latitude],
-            exits: 4214,
+            exits: SCATTER_SCALE_FACTOR,
             address: s.address,
             id: s.groupId,
           } as StationLayerData)
@@ -216,6 +243,20 @@ const App: React.FC = () => {
     }
   };
 
+  const prefOfficeTextLayer = new TextLayer({
+    id: 'pref-office-text-layer',
+    data: PREF_OFFICES,
+    pickable: true,
+    getPosition: (d: PrefOffice) => [d.longitude, d.latitude],
+    getText: (d: PrefOffice) => d.pref,
+    getSize: Math.sqrt(PREF_SCALE_FACTOR),
+    getAngle: 0,
+    getTextAnchor: 'middle',
+    getAlignmentBaseline: 'center',
+    characterSet: prefNameCharacters,
+    getColor: [238, 238, 238, 200],
+  });
+
   return (
     <>
       {loading && <LoadingOverlay />}
@@ -223,7 +264,12 @@ const App: React.FC = () => {
       <UntypedDeckGL
         initialViewState={initialViewState}
         controller={true}
-        layers={[geoJSONLayer, scatterplotLayer, userLocationScatterplotLayer]}
+        layers={[
+          geoJSONLayer,
+          scatterplotLayer,
+          userLocationScatterplotLayer,
+          prefOfficeTextLayer,
+        ]}
         width={window.innerWidth}
         height={window.innerHeight}
         getTooltip={getTooltip}

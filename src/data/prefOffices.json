@@ -1,0 +1,378 @@
+[
+  {
+    "pref": "北海道",
+    "prefEn": "Hokkaido",
+    "url": "http://www.pref.hokkaido.lg.jp/",
+    "address": "北海道札幌市中央区北3条西6丁目",
+    "latitude": 43.064301,
+    "longitude": 141.346874
+  },
+  {
+    "pref": "青森県",
+    "prefEn": "Aomori",
+    "url": "http://www.pref.aomori.lg.jp/",
+    "address": "青森県青森市長島一丁目1-1",
+    "latitude": 40.824622,
+    "longitude": 140.740598
+  },
+  {
+    "pref": "岩手県",
+    "prefEn": "Iwate",
+    "url": "http://www.pref.iwate.jp/",
+    "address": "岩手県盛岡市内丸10番1号",
+    "latitude": 39.7036,
+    "longitude": 141.152709
+  },
+  {
+    "pref": "宮城県",
+    "prefEn": "Miyagi",
+    "url": "http://www.pref.miyagi.jp/",
+    "address": "宮城県仙台市青葉区本町3丁目8番1号",
+    "latitude": 38.268812,
+    "longitude": 140.872082
+  },
+  {
+    "pref": "秋田県",
+    "prefEn": "Akita",
+    "url": "http://www.pref.akita.lg.jp/",
+    "address": "秋田県秋田市山王四丁目1-1",
+    "latitude": 39.718611,
+    "longitude": 140.102401
+  },
+  {
+    "pref": "山形県",
+    "prefEn": "Yamagata",
+    "url": "http://www.pref.yamagata.jp/",
+    "address": "山形県山形市松波二丁目8-1",
+    "latitude": 38.240422,
+    "longitude": 140.363592
+  },
+  {
+    "pref": "福島県",
+    "prefEn": "Fukushima",
+    "url": "http://www.pref.fukushima.jp/",
+    "address": "福島県福島市杉妻町2-16",
+    "latitude": 37.750301,
+    "longitude": 140.467522
+  },
+  {
+    "pref": "茨城県",
+    "prefEn": "Ibaraki",
+    "url": "http://www.pref.ibaraki.jp/",
+    "address": "茨城県水戸市笠原町978番6",
+    "latitude": 36.341793,
+    "longitude": 140.446802
+  },
+  {
+    "pref": "栃木県",
+    "prefEn": "Tochigi",
+    "url": "http://www.pref.tochigi.jp/",
+    "address": "栃木県宇都宮市塙田1-1-20",
+    "latitude": 36.566672,
+    "longitude": 139.883093
+  },
+  {
+    "pref": "群馬県",
+    "prefEn": "Gunma",
+    "url": "http://www.pref.gunma.jp/",
+    "address": "群馬県前橋市大手町1-1-1",
+    "latitude": 36.390698,
+    "longitude": 139.060451
+  },
+  {
+    "pref": "埼玉県",
+    "prefEn": "Saitama",
+    "url": "http://www.pref.saitama.lg.jp/",
+    "address": "埼玉県さいたま市浦和区高砂3-15-1",
+    "latitude": 35.857431,
+    "longitude": 139.648901
+  },
+  {
+    "pref": "千葉県",
+    "prefEn": "Chiba",
+    "url": "http://www.pref.chiba.jp/",
+    "address": "千葉県千葉市中央区市場町1-1",
+    "latitude": 35.605045,
+    "longitude": 140.123325
+  },
+  {
+    "pref": "東京都",
+    "prefEn": "Tokyo met.",
+    "url": "http://www.metro.tokyo.jp/",
+    "address": "東京都新宿区西新宿2-8-1",
+    "latitude": 35.689753,
+    "longitude": 139.691731
+  },
+  {
+    "pref": "神奈川県",
+    "prefEn": "Kanagawa",
+    "url": "http://www.pref.kanagawa.jp/",
+    "address": "神奈川県横浜市中区日本大通1",
+    "latitude": 35.447495,
+    "longitude": 139.6424
+  },
+  {
+    "pref": "新潟県",
+    "prefEn": "Niigata",
+    "url": "http://www.pref.niigata.jp/",
+    "address": "新潟県新潟市中央区新光町4番地1",
+    "latitude": 37.902419,
+    "longitude": 139.023225
+  },
+  {
+    "pref": "富山県",
+    "prefEn": "Toyama",
+    "url": "http://www.pref.toyama.jp/",
+    "address": "富山県富山市新総曲輪1番7号",
+    "latitude": 36.695275,
+    "longitude": 137.211342
+  },
+  {
+    "pref": "石川県",
+    "prefEn": "Ishikawa",
+    "url": "http://www.pref.ishikawa.jp/",
+    "address": "石川県金沢市鞍月1丁目1番地",
+    "latitude": 36.59473,
+    "longitude": 136.625582
+  },
+  {
+    "pref": "福井県",
+    "prefEn": "Fukui",
+    "url": "http://www.pref.fukui.jp/",
+    "address": "福井県福井市大手3-17-1",
+    "latitude": 36.065219,
+    "longitude": 136.221682
+  },
+  {
+    "pref": "山梨県",
+    "prefEn": "Yamanashi",
+    "url": "http://www.pref.yamanashi.jp/pref/",
+    "address": "山梨県甲府市丸の内1-6-1",
+    "latitude": 35.664161,
+    "longitude": 138.568459
+  },
+  {
+    "pref": "長野県",
+    "prefEn": "Nagano",
+    "url": "http://www.pref.nagano.jp/",
+    "address": "長野県長野市大字南長野字幅下692-2",
+    "latitude": 36.651296,
+    "longitude": 138.181239
+  },
+  {
+    "pref": "岐阜県",
+    "prefEn": "Gifu",
+    "url": "http://www.pref.gifu.lg.jp/",
+    "address": "岐阜県岐阜市薮田南2-1-1",
+    "latitude": 35.391228,
+    "longitude": 136.722311
+  },
+  {
+    "pref": "静岡県",
+    "prefEn": "Shizuoka",
+    "url": "http://www.pref.shizuoka.jp/",
+    "address": "静岡県静岡市葵区追手町9番6号",
+    "latitude": 34.976944,
+    "longitude": 138.383009
+  },
+  {
+    "pref": "愛知県",
+    "prefEn": "Aichi",
+    "url": "http://www.pref.aichi.jp/",
+    "address": "愛知県名古屋市中区三の丸三丁目1番2号",
+    "latitude": 35.180344,
+    "longitude": 136.906632
+  },
+  {
+    "pref": "三重県",
+    "prefEn": "Mie",
+    "url": "http://www.pref.mie.jp/",
+    "address": "三重県津市広明町13",
+    "latitude": 34.730272,
+    "longitude": 136.508598
+  },
+  {
+    "pref": "滋賀県",
+    "prefEn": "Shiga",
+    "url": "http://www.pref.shiga.jp/",
+    "address": "滋賀県大津市京町四丁目1番1号",
+    "latitude": 35.004528,
+    "longitude": 135.868607
+  },
+  {
+    "pref": "京都府",
+    "prefEn": "Kyoto",
+    "url": "http://www.pref.kyoto.jp/",
+    "address": "京都府京都市上京区下立売通新町西入薮ノ内町",
+    "latitude": 35.021393,
+    "longitude": 135.755439
+  },
+  {
+    "pref": "大阪府",
+    "prefEn": "Osaka",
+    "url": "http://www.pref.osaka.jp/",
+    "address": "大阪府大阪市中央区大手前2丁目",
+    "latitude": 34.686555,
+    "longitude": 135.519474
+  },
+  {
+    "pref": "兵庫県",
+    "prefEn": "Hyogo",
+    "url": "http://web.pref.hyogo.jp/",
+    "address": "兵庫県神戸市中央区下山手通5丁目10番1号",
+    "latitude": 34.691287,
+    "longitude": 135.183061
+  },
+  {
+    "pref": "奈良県",
+    "prefEn": "Nara",
+    "url": "http://www.pref.nara.jp/",
+    "address": "奈良県奈良市登大路町30",
+    "latitude": 34.685326,
+    "longitude": 135.832751
+  },
+  {
+    "pref": "和歌山県",
+    "prefEn": "Wakayama pref",
+    "url": "http://www.pref.wakayama.lg.jp/",
+    "address": "和歌山県和歌山市小松原通1-1",
+    "latitude": 34.226041,
+    "longitude": 135.167504
+  },
+  {
+    "pref": "鳥取県",
+    "prefEn": "Tottori",
+    "url": "http://www.pref.tottori.lg.jp/",
+    "address": "鳥取県鳥取市東町1丁目220",
+    "latitude": 35.503867,
+    "longitude": 134.237716
+  },
+  {
+    "pref": "島根県",
+    "prefEn": "Shimane",
+    "url": "http://www.pref.shimane.lg.jp/",
+    "address": "島根県松江市殿町1番地",
+    "latitude": 35.472324,
+    "longitude": 133.05052
+  },
+  {
+    "pref": "岡山県",
+    "prefEn": "Okayama",
+    "url": "http://www.pref.okayama.jp/",
+    "address": "岡山県岡山市内山下2丁目4番6号",
+    "latitude": 34.661759,
+    "longitude": 133.934399
+  },
+  {
+    "pref": "広島県",
+    "prefEn": "Hiroshima",
+    "url": "http://www.pref.hiroshima.lg.jp/",
+    "address": "広島県広島市中区基町10-52",
+    "latitude": 34.396603,
+    "longitude": 132.459621
+  },
+  {
+    "pref": "山口県",
+    "prefEn": "Yamaguchi",
+    "url": "http://www.pref.yamaguchi.jp/",
+    "address": "山口県山口市滝町1番1号",
+    "latitude": 34.18613,
+    "longitude": 131.470497
+  },
+  {
+    "pref": "徳島県",
+    "prefEn": "Tokushima",
+    "url": "http://www.pref.tokushima.jp/",
+    "address": "徳島県徳島市万代町1丁目1番地",
+    "latitude": 34.065756,
+    "longitude": 134.559297
+  },
+  {
+    "pref": "香川県",
+    "prefEn": "Kagawa",
+    "url": "http://www.pref.kagawa.jp/",
+    "address": "香川県高松市番町4-1-10",
+    "latitude": 34.340045,
+    "longitude": 134.043369
+  },
+  {
+    "pref": "愛媛県",
+    "prefEn": "Ehime",
+    "url": "http://www.pref.ehime.jp/",
+    "address": "愛媛県松山市一番町4丁目4-2",
+    "latitude": 33.841669,
+    "longitude": 132.765371
+  },
+  {
+    "pref": "高知県",
+    "prefEn": "Kochi",
+    "url": "http://www.pref.kochi.jp/",
+    "address": "高知県高知市丸ノ内1丁目2番20号",
+    "latitude": 33.5597,
+    "longitude": 133.531096
+  },
+  {
+    "pref": "福岡県",
+    "prefEn": "Fukuoka",
+    "url": "http://www.pref.fukuoka.lg.jp/",
+    "address": "福岡県福岡市博多区東公園7番7号",
+    "latitude": 33.606781,
+    "longitude": 130.418307
+  },
+  {
+    "pref": "佐賀県",
+    "prefEn": "Saga",
+    "url": "http://www.pref.saga.lg.jp/web/",
+    "address": "佐賀県佐賀市城内1丁目1-59",
+    "latitude": 33.24957,
+    "longitude": 130.299804
+  },
+  {
+    "pref": "長崎県",
+    "prefEn": "Nagasaki",
+    "url": "http://www.pref.nagasaki.jp/",
+    "address": "長崎県長崎市江戸町2-13",
+    "latitude": 32.744814,
+    "longitude": 129.8737
+  },
+  {
+    "pref": "熊本県",
+    "prefEn": "Kumamoto",
+    "url": "http://www.pref.kumamoto.jp/",
+    "address": "熊本県熊本市水前寺6丁目18番1号",
+    "latitude": 32.789816,
+    "longitude": 130.74169
+  },
+  {
+    "pref": "大分県",
+    "prefEn": "Oita",
+    "url": "http://www.pref.oita.jp/",
+    "address": "大分県大分市大手町3丁目1番1号",
+    "latitude": 33.238205,
+    "longitude": 131.612625
+  },
+  {
+    "pref": "宮崎県",
+    "prefEn": "Miyazaki",
+    "url": "http://www.pref.miyazaki.lg.jp/",
+    "address": "宮崎県宮崎市橘通東二丁目10番1号",
+    "latitude": 31.911058,
+    "longitude": 131.423883
+  },
+  {
+    "pref": "鹿児島県",
+    "prefEn": "Kagoshima",
+    "url": "http://www.pref.kagoshima.jp/",
+    "address": "鹿児島県鹿児島市鴨池新町10番1号",
+    "latitude": 31.560166,
+    "longitude": 130.557994
+  },
+  {
+    "pref": "沖縄県",
+    "prefEn": "Okinawa",
+    "url": "http://www.pref.okinawa.jp/",
+    "address": "沖縄県那覇市泉崎1-2-2",
+    "latitude": 26.212418,
+    "longitude": 127.680895
+  }
+]
