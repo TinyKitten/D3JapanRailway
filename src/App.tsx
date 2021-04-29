@@ -68,8 +68,7 @@ const prefNameCharacters = PREF_OFFICES.reduce((acc, cur) => {
   return acc;
 }, []);
 
-const SCATTER_SCALE_FACTOR = 4214;
-const PREF_SCALE_FACTOR = 500;
+const SCALE_FACTOR = 500;
 
 type ViewState = {
   latitude: number;
@@ -115,7 +114,7 @@ const App: React.FC = () => {
         {
           type: 'userLocation',
           coordinates: [location.coords.longitude, location.coords.latitude],
-          exits: SCATTER_SCALE_FACTOR,
+          exits: SCALE_FACTOR,
         },
       ] as UserLocationLayerData[],
       pickable: true,
@@ -179,7 +178,7 @@ const App: React.FC = () => {
             type: 'station',
             name: s.name,
             coordinates: [s.longitude, s.latitude],
-            exits: SCATTER_SCALE_FACTOR,
+            exits: SCALE_FACTOR,
             address: s.address,
             id: s.groupId,
           } as StationLayerData)
@@ -262,8 +261,7 @@ const App: React.FC = () => {
 
     switch (object.type) {
       case 'station':
-        `${object.name}駅\n${object.address}\n緯度: ${object.coordinates[1]}\n経度: ${object.coordinates[0]}`;
-        return;
+        return `${object.name}駅\n${object.address}\n緯度: ${object.coordinates[1]}\n経度: ${object.coordinates[0]}`;
       case 'userLocation':
         return `現在地\n緯度: ${object.coordinates[1]}\n経度: ${object.coordinates[0]}`;
       default:
@@ -277,7 +275,7 @@ const App: React.FC = () => {
     pickable: true,
     getPosition: (d: PrefOffice) => [d.longitude, d.latitude],
     getText: (d: PrefOffice) => d.pref,
-    getSize: Math.sqrt(PREF_SCALE_FACTOR),
+    getSize: Math.sqrt(SCALE_FACTOR),
     getAngle: 0,
     getTextAnchor: 'middle',
     getAlignmentBaseline: 'center',
