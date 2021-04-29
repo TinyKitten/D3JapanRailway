@@ -14,62 +14,46 @@ const ALL_TOOLS: Tool[] = [
 ];
 
 const Tools: React.FC = () => {
-  const [locationFromState, setLocationFromState] = useRecoilState(
+  const [{ location, followLocation }, setLocationFromState] = useRecoilState(
     locationState
   );
+
+  const getIsActive = (t: Tool) => {
+    switch (t.id) {
+      case 'location':
+        return followLocation;
+      default:
+        return false;
+    }
+  };
 
   const handleOnClick = (t: Tool) => {
     switch (t.id) {
       case 'location':
-        setLocationFromState((prev) => ({ ...prev, fetching: true })),
-          navigator.geolocation.getCurrentPosition(
-            (location) =>
-              setLocationFromState((prev) => ({
-                ...prev,
-                location,
-                fetching: false,
-              })),
-            (err) => setLocationFromState((prev) => ({ ...prev, error: err }))
-          );
-        break;
-      default:
-        break;
-    }
-  };
-
-  const getIsDisabled = (t: Tool) => {
-    switch (t.id) {
-      case 'location':
-        if (locationFromState.fetching) {
-          return true;
+        if (!location) {
+          return;
         }
-        return false;
+        setLocationFromState((prev) => ({
+          ...prev,
+          followLocation: true,
+          centerCoordinates: [136.0, 35.6],
+        }));
+        break;
       default:
-        return false;
+        break;
     }
   };
 
   return (
     <div className={styles.tools}>
-      {ALL_TOOLS.map((t) =>
-        t.id === 'location' ? (
-          locationFromState.location && (
-            <ToolButton
-              disabled={getIsDisabled(t)}
-              onClick={() => handleOnClick(t)}
-              tool={t}
-              key={t.id}
-            />
-          )
-        ) : (
-          <ToolButton
-            disabled={getIsDisabled(t)}
-            onClick={() => handleOnClick(t)}
-            tool={t}
-            key={t.id}
-          />
-        )
-      )}
+      {ALL_TOOLS.map((t) => (
+        <ToolButton
+          active={getIsActive(t)}
+          onClick={() => handleOnClick(t)}
+          tool={t}
+          key={t.id}
+        />
+      ))}
     </div>
   );
 };

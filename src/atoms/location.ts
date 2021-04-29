@@ -4,7 +4,7 @@ import { LOCATION_STATE } from '../constants/state';
 type State = {
   location: GeolocationPosition;
   error: GeolocationPositionError;
-  fetching: boolean;
+  followLocation: boolean;
 };
 
 const locationState = atom<State>({
@@ -12,7 +12,7 @@ const locationState = atom<State>({
   default: {
     location: null,
     error: null,
-    fetching: false,
+    followLocation: true,
   },
 });
 

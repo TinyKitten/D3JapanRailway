@@ -1,6 +1,5 @@
 .button {
   appearance: none;
-  background-color: #fcfcfc;
   border-radius: 50%;
   border: none;
   width: 44px;
@@ -13,4 +12,7 @@
 }
 .button:disabled {
   box-shadow: none;
+}
+.button:active {
+  opacity: 0.5;
 }

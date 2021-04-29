@@ -71,15 +71,28 @@ const prefNameCharacters = PREF_OFFICES.reduce((acc, cur) => {
 const SCATTER_SCALE_FACTOR = 4214;
 const PREF_SCALE_FACTOR = 500;
 
+type ViewState = {
+  latitude: number;
+  longitude: number;
+  zoom: number;
+  bearing: number;
+  pitch: number;
+};
+
 const App: React.FC = () => {
   const { loading, error, data } = useQuery(ALL_STATIONS);
   const [hasLocationError, setHasLocationError] = useState(false);
-  const [pendingLocationFetch, setPendingLocationFetch] = useState(true);
-  const [{ location }, setLocationFromState] = useRecoilState(locationState);
+  const [centerCoordinates, setCenterCoordinates] = useState<[number, number]>([
+    136.0,
+    35.6,
+  ]);
+  const [{ location, followLocation }, setLocationFromState] = useRecoilState(
+    locationState
+  );
 
-  const initialViewState = {
-    latitude: location?.coords.latitude || 35.6,
-    longitude: location?.coords.longitude || 136.0,
+  const initialViewState: ViewState = {
+    latitude: centerCoordinates[1],
+    longitude: centerCoordinates[0],
     zoom: location ? 10 : 4,
     bearing: 0,
     pitch: 0,
@@ -197,25 +210,40 @@ const App: React.FC = () => {
   useEffect(() => {
     setLocationFromState((prev) => ({
       ...prev,
-      fetching: true,
     }));
-    navigator.geolocation.getCurrentPosition(
-      (location) => {
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
         setLocationFromState((prev) => ({
           ...prev,
-          location,
-          fetching: false,
+          location: pos,
         }));
-        setPendingLocationFetch(false);
       },
       () => {
         setHasLocationError(true);
-        setPendingLocationFetch(false);
+      },
+      {
+        enableHighAccuracy: true,
       }
     );
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
   }, [setLocationFromState]);
 
-  if (pendingLocationFetch || !geoJSONLayer || !scatterplotLayer) {
+  useEffect(() => {
+    if (!location) {
+      return;
+    }
+    const {
+      coords: { latitude, longitude },
+    } = location;
+    if (followLocation) {
+      setCenterCoordinates([longitude, latitude]);
+    }
+  }, [followLocation, location, setLocationFromState]);
+
+  if (!geoJSONLayer || !scatterplotLayer) {
     return <LoadingOverlay />;
   }
 
@@ -257,6 +285,9 @@ const App: React.FC = () => {
     getColor: [238, 238, 238, 200],
   });
 
+  const handleDragEnd = () =>
+    setLocationFromState((prev) => ({ ...prev, followLocation: false }));
+
   return (
     <>
       {loading && <LoadingOverlay />}
@@ -270,9 +301,8 @@ const App: React.FC = () => {
           userLocationScatterplotLayer,
           prefOfficeTextLayer,
         ]}
-        width={window.innerWidth}
-        height={window.innerHeight}
         getTooltip={getTooltip}
+        onDragEnd={handleDragEnd}
       />
       <Credit />
       <Tools />
