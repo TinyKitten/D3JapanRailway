@@ -30,11 +30,18 @@ const ALL_STATIONS = gql`
 `;
 
 type StationLayerData = {
+  type: 'station';
   name: string;
   coordinates: [number, number];
   exits: number;
   address: string;
   id: number;
+};
+
+type UserLocationLayerData = {
+  type: 'userLocation';
+  coordinates: [number, number];
+  exits: number;
 };
 
 const App: React.FC = () => {
@@ -53,6 +60,41 @@ const App: React.FC = () => {
 
   const [geoJSONLayer, setGeoJSONLayer] = useState<any>();
   const [scatterplotLayer, setScatterplotLayer] = useState<any>();
+  const [
+    userLocationScatterplotLayer,
+    setUserLocationScatterplotLayer,
+  ] = useState<any>();
+
+  useEffect(() => {
+    if (!location) {
+      return;
+    }
+    const layer = new ScatterplotLayer({
+      id: 'scatterplot-layer-my-location',
+      data: [
+        {
+          type: 'userLocation',
+          coordinates: [location.coords.longitude, location.coords.latitude],
+          exits: 4214,
+        },
+      ] as UserLocationLayerData[],
+      pickable: true,
+      opacity: 0.8,
+      stroked: true,
+      filled: true,
+      radiusScale: 6,
+      radiusMinPixels: 1,
+      radiusMaxPixels: 100,
+      lineWidthMinPixels: 1,
+      getLineColor: () => [255, 255, 255],
+      getPosition: (d: UserLocationLayerData) =>
+        (d as UserLocationLayerData).coordinates,
+      getRadius: (d: UserLocationLayerData) =>
+        Math.sqrt((d as UserLocationLayerData).exits),
+      getFillColor: () => [0, 143, 254],
+    });
+    setUserLocationScatterplotLayer(layer);
+  }, [location]);
 
   useEffect(() => {
     const initAsync = async () => {
@@ -91,13 +133,17 @@ const App: React.FC = () => {
 
     const layer = new ScatterplotLayer({
       id: 'scatterplot-layer',
-      data: data.allStations.map((s: Station) => ({
-        name: s.name,
-        coordinates: [s.longitude, s.latitude],
-        exits: 4214,
-        address: s.address,
-        id: s.groupId,
-      })),
+      data: data.allStations.map(
+        (s: Station) =>
+          ({
+            type: 'station',
+            name: s.name,
+            coordinates: [s.longitude, s.latitude],
+            exits: 4214,
+            address: s.address,
+            id: s.groupId,
+          } as StationLayerData)
+      ),
       pickable: true,
       opacity: 0.8,
       stroked: true,
@@ -116,6 +162,7 @@ const App: React.FC = () => {
             (d.object as StationLayerData).id
           }`
         ),
+      getLineColor: () => [33, 33, 33],
     });
     setScatterplotLayer(layer);
   }, [data]);
@@ -149,6 +196,26 @@ const App: React.FC = () => {
 
   const UntypedDeckGL = DeckGL as any;
 
+  const getTooltip = ({
+    object,
+  }: {
+    object: StationLayerData | UserLocationLayerData;
+  }) => {
+    if (!object) {
+      return;
+    }
+
+    switch (object.type) {
+      case 'station':
+        `${object.name}駅\n${object.address}\n緯度: ${object.coordinates[1]}\n経度: ${object.coordinates[0]}`;
+        return;
+      case 'userLocation':
+        return `現在地\n緯度: ${object.coordinates[1]}\n経度: ${object.coordinates[0]}`;
+      default:
+        return;
+    }
+  };
+
   return (
     <>
       {loading && <LoadingOverlay />}
@@ -156,13 +223,10 @@ const App: React.FC = () => {
       <UntypedDeckGL
         initialViewState={initialViewState}
         controller={true}
-        layers={[geoJSONLayer, scatterplotLayer]}
+        layers={[geoJSONLayer, scatterplotLayer, userLocationScatterplotLayer]}
         width={window.innerWidth}
         height={window.innerHeight}
-        getTooltip={({ object }: { object: StationLayerData }) =>
-          object &&
-          `${object.name}駅\n${object.address}\n緯度: ${object.coordinates[1]}\n経度: ${object.coordinates[0]}`
-        }
+        getTooltip={getTooltip}
       />
       <Credit />
       <Tools />
