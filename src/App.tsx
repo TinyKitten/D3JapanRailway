@@ -92,7 +92,7 @@ const App: React.FC = () => {
   const initialViewState: ViewState = {
     latitude: centerCoordinates[1],
     longitude: centerCoordinates[0],
-    zoom: location ? 10 : 4,
+    zoom: location ? 12 : 4,
     bearing: 0,
     pitch: 0,
   };
