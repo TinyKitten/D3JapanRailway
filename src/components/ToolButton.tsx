@@ -1,8 +1,8 @@
-import React from 'react';
-import Tool from '../models/Tool';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import styles from './ToolButton.module.css';
 import { grey } from '@material-ui/core/colors';
+import React from 'react';
+import { Tool } from '../models';
+import styles from './ToolButton.module.css';
 
 type Props = {
   tool: Tool;
