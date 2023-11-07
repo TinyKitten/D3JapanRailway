@@ -1,34 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import DeckGL from '@deck.gl/react';
 import { GeoJsonLayer, ScatterplotLayer, TextLayer } from '@deck.gl/layers';
-import * as topojson from 'topojson-client';
-import * as d3 from 'd3';
-import { GeoJsonProperties, FeatureCollection, Geometry } from 'geojson';
-import japanGeoPath from './data/japan.topojson';
-import LoadingOverlay from './components/LoadingOverlay';
-import Station from './models/Station';
-import ErrorOverlay from './components/ErrorOverlay';
-import Credit from './components/Credit';
+import DeckGL from '@deck.gl/react';
 import { IconButton, Snackbar } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import locationState from './atoms/location';
+import * as d3 from 'd3';
+import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
+import * as topojson from 'topojson-client';
+import locationState from './atoms/location';
+import Credit from './components/Credit';
+import ErrorOverlay from './components/ErrorOverlay';
+import LoadingOverlay from './components/LoadingOverlay';
 import Tools from './components/Tools';
+import japanGeoPath from './data/japan.topojson';
 import PREF_OFFICES from './data/prefOffices.json';
-
-const ALL_STATIONS = gql`
-  query GetAllStations {
-    allStations {
-      groupId
-      name
-      latitude
-      longitude
-      address
-    }
-  }
-`;
+import { Station } from './gen/stationapi_pb';
+import { useFetchAllStations } from './hooks/useFetchAllStations';
 
 type StationLayerData = {
   type: 'station';
@@ -79,7 +67,6 @@ type ViewState = {
 };
 
 const App: React.FC = () => {
-  const { loading, error, data } = useQuery(ALL_STATIONS);
   const [hasLocationError, setHasLocationError] = useState(false);
   const [centerCoordinates, setCenterCoordinates] = useState<[number, number]>([
     136.0,
@@ -103,6 +90,8 @@ const App: React.FC = () => {
     userLocationScatterplotLayer,
     setUserLocationScatterplotLayer,
   ] = useState<any>();
+
+  const { stations, loading, error } = useFetchAllStations();
 
   useEffect(() => {
     if (!location) {
@@ -166,14 +155,14 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!data) {
+    if (!stations.length) {
       return;
     }
 
     const layer = new ScatterplotLayer({
       id: 'scatterplot-layer',
-      data: data.allStations.map(
-        (s: Station) =>
+      data: stations.map(
+        (s: Station.AsObject) =>
           ({
             type: 'station',
             name: s.name,
@@ -204,7 +193,7 @@ const App: React.FC = () => {
       getLineColor: () => [33, 33, 33],
     });
     setScatterplotLayer(layer);
-  }, [data]);
+  }, [stations]);
 
   useEffect(() => {
     setLocationFromState((prev) => ({

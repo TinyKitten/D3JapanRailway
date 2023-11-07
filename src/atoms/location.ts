@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { LOCATION_STATE } from '../constants/state';
+import { RECOIL_STATES } from '../constants';
 
 type State = {
   location: GeolocationPosition;
@@ -8,7 +8,7 @@ type State = {
 };
 
 const locationState = atom<State>({
-  key: LOCATION_STATE,
+  key: RECOIL_STATES.LOCATION_STATE,
   default: {
     location: null,
     error: null,

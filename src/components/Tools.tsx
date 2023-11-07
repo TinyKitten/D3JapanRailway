@@ -1,10 +1,10 @@
-import React from 'react';
-import styles from './Tools.module.css';
 import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
-import ToolButton from './ToolButton';
-import Tool from '../models/Tool';
-import locationState from '../atoms/location';
+import React from 'react';
 import { useRecoilState } from 'recoil';
+import locationState from '../atoms/location';
+import { Tool } from '../models';
+import ToolButton from './ToolButton';
+import styles from './Tools.module.css';
 
 const ALL_TOOLS: Tool[] = [
   {
